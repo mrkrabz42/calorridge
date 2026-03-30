@@ -1,2 +1,14 @@
 [functions.analyze-meal]
 verify_jwt = false
+
+[functions.suggest-meals]
+verify_jwt = false
+
+[functions.chat]
+verify_jwt = false
+
+[functions.barcode-lookup]
+verify_jwt = false
+
+[functions.search-food]
+verify_jwt = false

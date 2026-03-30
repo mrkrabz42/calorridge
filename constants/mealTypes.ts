@@ -10,25 +10,25 @@ export interface MealTypeConfig {
 export const MEAL_TYPES: Record<MealType, MealTypeConfig> = {
   breakfast: {
     label: 'Breakfast',
-    icon: '🌅',
+    icon: 'B',
     defaultTime: '08:00',
     color: '#FACC15',
   },
   lunch: {
     label: 'Lunch',
-    icon: '☀️',
+    icon: 'L',
     defaultTime: '12:30',
     color: '#4ADE80',
   },
   dinner: {
     label: 'Dinner',
-    icon: '🌙',
+    icon: 'D',
     defaultTime: '19:00',
     color: '#818CF8',
   },
   snack: {
     label: 'Snack',
-    icon: '🍎',
+    icon: 'Sn',
     defaultTime: '15:00',
     color: '#FB923C',
   },

@@ -1,11 +1,14 @@
 import { supabase } from './supabase';
+import { profileManager } from './profileManager';
 import { DailyGoals, GoalsInput } from '../types';
 
 export const goalsService = {
   async getGoals(): Promise<DailyGoals | null> {
+    const profileId = profileManager.getActiveProfileIdSync();
     const { data, error } = await supabase
       .from('daily_goals')
       .select('*')
+      .eq('profile_id', profileId)
       .limit(1)
       .single();
 
@@ -17,6 +20,7 @@ export const goalsService = {
   },
 
   async updateGoals(input: GoalsInput): Promise<DailyGoals> {
+    const profileId = profileManager.getActiveProfileIdSync();
     // Get existing row to upsert
     const existing = await goalsService.getGoals();
 
@@ -24,6 +28,7 @@ export const goalsService = {
       const { data, error } = await supabase
         .from('daily_goals')
         .update(input)
+        .eq('profile_id', profileId)
         .eq('id', existing.id)
         .select()
         .single();
@@ -33,7 +38,7 @@ export const goalsService = {
     } else {
       const { data, error } = await supabase
         .from('daily_goals')
-        .insert(input)
+        .insert({ ...input, profile_id: profileId })
         .select()
         .single();
 

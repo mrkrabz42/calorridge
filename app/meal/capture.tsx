@@ -89,10 +89,10 @@ export default function CaptureScreen() {
   if (!hasPermission) {
     return (
       <View style={styles.permissionContainer}>
-        <Text style={styles.permissionIcon}>📷</Text>
+        <Text style={styles.permissionIcon}>Camera</Text>
         <Text style={styles.permissionTitle}>Camera Access Needed</Text>
         <Text style={styles.permissionText}>
-          CalorRidge needs camera access to photograph and analyze your meals.
+          CalorRidge needs camera access to photograph and analyse your meals.
         </Text>
         <TouchableOpacity style={styles.permissionBtn} onPress={requestPermission}>
           <Text style={styles.permissionBtnText}>Enable Camera</Text>
@@ -126,7 +126,7 @@ export default function CaptureScreen() {
             style={styles.notesToggle}
             onPress={() => setShowNotes((p) => !p)}
           >
-            <Text style={styles.notesToggleText}>📝</Text>
+            <Text style={styles.notesToggleText}>N</Text>
           </TouchableOpacity>
         </View>
 
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     padding: Spacing.xl,
     gap: Spacing.md,
   },
-  permissionIcon: { fontSize: 64 },
+  permissionIcon: { fontSize: 28, color: Colors.text.secondary, fontWeight: Typography.weights.bold },
   permissionTitle: {
     color: Colors.text.primary,
     fontSize: Typography.sizes.xl,

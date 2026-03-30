@@ -1,11 +1,14 @@
 import { supabase } from './supabase';
+import { profileManager } from './profileManager';
 import { Meal, CreateMealInput, DailyNutrition } from '../types';
 
 export const mealsService = {
   async createMeal(input: CreateMealInput): Promise<Meal> {
+    const profileId = profileManager.getActiveProfileIdSync();
     const { data, error } = await supabase
       .from('meals')
       .insert({
+        profile_id: profileId,
         meal_type: input.meal_type,
         meal_date: input.meal_date,
         notes: input.notes,
@@ -29,9 +32,11 @@ export const mealsService = {
   },
 
   async getMealsByDate(date: string): Promise<Meal[]> {
+    const profileId = profileManager.getActiveProfileIdSync();
     const { data, error } = await supabase
       .from('meals')
       .select('*')
+      .eq('profile_id', profileId)
       .eq('meal_date', date)
       .order('logged_at', { ascending: true });
 
@@ -40,9 +45,11 @@ export const mealsService = {
   },
 
   async getMealById(id: string): Promise<Meal | null> {
+    const profileId = profileManager.getActiveProfileIdSync();
     const { data, error } = await supabase
       .from('meals')
       .select('*')
+      .eq('profile_id', profileId)
       .eq('id', id)
       .single();
 
@@ -54,12 +61,14 @@ export const mealsService = {
   },
 
   async getMealsPaginated(page: number, pageSize = 20): Promise<Meal[]> {
+    const profileId = profileManager.getActiveProfileIdSync();
     const from = page * pageSize;
     const to = from + pageSize - 1;
 
     const { data, error } = await supabase
       .from('meals')
       .select('*')
+      .eq('profile_id', profileId)
       .order('logged_at', { ascending: false })
       .range(from, to);
 
@@ -68,7 +77,8 @@ export const mealsService = {
   },
 
   async deleteMeal(id: string): Promise<void> {
-    const { error } = await supabase.from('meals').delete().eq('id', id);
+    const profileId = profileManager.getActiveProfileIdSync();
+    const { error } = await supabase.from('meals').delete().eq('profile_id', profileId).eq('id', id);
     if (error) throw new Error(`Failed to delete meal: ${error.message}`);
   },
 

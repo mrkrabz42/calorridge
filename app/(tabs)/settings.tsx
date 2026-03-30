@@ -8,7 +8,11 @@ import {
   Alert,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
+import { router } from 'expo-router';
 import { useGoalsStore } from '../../store/goalsStore';
+import { useProfileStore } from '../../store/profileStore';
+import { useChallengeStore } from '../../store/challengeStore';
+import { useActiveProfileStore } from '../../store/activeProfileStore';
 import { Colors, Typography, Spacing, Radius } from '../../constants';
 
 interface GoalSliderProps {
@@ -50,8 +54,24 @@ function GoalSlider({ label, value, min, max, step, unit, color, onChange }: Goa
   );
 }
 
+function LinkRow({ icon, label, sublabel, onPress }: { icon: string; label: string; sublabel?: string; onPress: () => void }) {
+  return (
+    <TouchableOpacity style={styles.linkRow} onPress={onPress} activeOpacity={0.7}>
+      <Text style={styles.linkIcon}>{icon}</Text>
+      <View style={{ flex: 1 }}>
+        <Text style={styles.linkLabel}>{label}</Text>
+        {sublabel && <Text style={styles.linkSub}>{sublabel}</Text>}
+      </View>
+      <Text style={styles.linkArrow}>›</Text>
+    </TouchableOpacity>
+  );
+}
+
 export default function SettingsScreen() {
   const { goals, updateGoals, isLoading } = useGoalsStore();
+  const { profile } = useProfileStore();
+  const { activeChallenge } = useChallengeStore();
+  const switchProfile = useActiveProfileStore((s) => s.switchProfile);
   const [local, setLocal] = useState({ ...goals });
   const [saved, setSaved] = useState(false);
 
@@ -76,8 +96,60 @@ export default function SettingsScreen() {
     ]);
   };
 
+  const profileSummary = profile?.weight_kg
+    ? `${profile.weight_kg}kg · ${profile.goal_type ?? 'No goal set'}`
+    : 'Not set up yet';
+
   return (
     <ScrollView style={styles.root} contentContainerStyle={styles.content}>
+      {/* Quick links */}
+      <View style={styles.linksCard}>
+        <LinkRow
+          icon="P"
+          label="Profile"
+          sublabel={profileSummary}
+          onPress={() => router.push('/profile')}
+        />
+        <View style={styles.divider} />
+        <LinkRow
+          icon="I"
+          label="Pantry"
+          sublabel="Ingredients for meal suggestions"
+          onPress={() => router.push('/pantry')}
+        />
+        <View style={styles.divider} />
+        <LinkRow
+          icon="C"
+          label="Challenge"
+          sublabel={activeChallenge ? `${activeChallenge.name} (active)` : 'No active challenge'}
+          onPress={() => activeChallenge
+            ? router.push(`/challenge/${activeChallenge.id}`)
+            : router.push('/challenge/create')
+          }
+        />
+        <View style={styles.divider} />
+        <LinkRow
+          icon="W"
+          label="Weight Log"
+          sublabel="Track weight and adaptive calories"
+          onPress={() => router.push('/weight-log')}
+        />
+        <View style={styles.divider} />
+        <LinkRow
+          icon="A"
+          label="Analytics"
+          sublabel="Measurements, streaks, achievements"
+          onPress={() => router.push('/analytics')}
+        />
+        <View style={styles.divider} />
+        <LinkRow
+          icon="G"
+          label="Photo and Goals"
+          sublabel="Upload photo, get AI body plan"
+          onPress={() => router.push('/profile-photo')}
+        />
+      </View>
+
       <Text style={styles.sectionTitle}>Daily Nutrition Goals</Text>
       <Text style={styles.sectionSubtitle}>
         Adjust your targets to match your diet plan
@@ -125,7 +197,7 @@ export default function SettingsScreen() {
           onChange={(v) => setLocal((p) => ({ ...p, fat_g: v }))}
         />
         <GoalSlider
-          label="Fiber"
+          label="Fibre"
           value={local.fiber_g}
           min={10}
           max={60}
@@ -150,13 +222,23 @@ export default function SettingsScreen() {
       </View>
 
       <View style={styles.infoCard}>
-        <Text style={styles.infoTitle}>💡 About CalorRidge</Text>
+        <Text style={styles.infoTitle}>About CalorRidge</Text>
         <Text style={styles.infoText}>
-          CalorRidge uses Claude AI vision to analyze your meal photos and estimate macronutrients.
-          Add portion notes on the capture screen for more accurate results.
+          AI-powered nutrition tracking, workout logging, and personalised challenges.
+          Snap meals, scan barcodes, log workouts, and get meal suggestions to hit your goals.
         </Text>
-        <Text style={styles.infoCost}>Estimated cost: ~$1–2/year</Text>
       </View>
+
+      <TouchableOpacity
+        style={styles.switchProfileBtn}
+        onPress={() => {
+          switchProfile();
+          router.replace('/profile-picker');
+        }}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.switchProfileText}>Switch Profile</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -164,6 +246,39 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: Colors.bg.primary },
   content: { padding: Spacing.md, gap: Spacing.lg },
+  linksCard: {
+    backgroundColor: Colors.bg.card,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Colors.border.default,
+    overflow: 'hidden',
+  },
+  linkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: Spacing.md,
+    gap: Spacing.sm,
+  },
+  linkIcon: { fontSize: 16, color: Colors.brand.primary, fontWeight: Typography.weights.bold, width: 28, height: 28, borderRadius: 14, backgroundColor: Colors.brand.primary + '20', textAlign: 'center', lineHeight: 28 },
+  linkLabel: {
+    color: Colors.text.primary,
+    fontSize: Typography.sizes.base,
+    fontWeight: Typography.weights.medium,
+  },
+  linkSub: {
+    color: Colors.text.muted,
+    fontSize: Typography.sizes.xs,
+    marginTop: 2,
+  },
+  linkArrow: {
+    color: Colors.text.muted,
+    fontSize: Typography.sizes.xl,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: Colors.border.default,
+    marginHorizontal: Spacing.md,
+  },
   sectionTitle: {
     color: Colors.text.primary,
     fontSize: Typography.sizes.xl,
@@ -249,9 +364,17 @@ const styles = StyleSheet.create({
     fontSize: Typography.sizes.sm,
     lineHeight: 20,
   },
-  infoCost: {
-    color: Colors.macro.fiber,
-    fontSize: Typography.sizes.sm,
+  switchProfileBtn: {
+    backgroundColor: Colors.bg.card,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: Colors.border.default,
+    padding: Spacing.md,
+    alignItems: 'center',
+  },
+  switchProfileText: {
+    color: Colors.status.warning,
+    fontSize: Typography.sizes.base,
     fontWeight: Typography.weights.medium,
   },
 });

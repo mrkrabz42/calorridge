@@ -1,9 +1,32 @@
 import { Tabs } from 'expo-router';
-import { Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { Colors, Typography } from '../../constants';
 
-function TabIcon({ icon, focused }: { icon: string; focused: boolean }) {
-  return <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.5 }}>{icon}</Text>;
+function TabIcon({ letter, focused }: { letter: string; focused: boolean }) {
+  return (
+    <View
+      style={{
+        width: 28,
+        height: 28,
+        borderRadius: 14,
+        backgroundColor: focused ? Colors.brand.primary : 'transparent',
+        borderWidth: focused ? 0 : 1.5,
+        borderColor: Colors.text.muted,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 13,
+          fontWeight: '700',
+          color: focused ? Colors.text.inverse : Colors.text.muted,
+        }}
+      >
+        {letter}
+      </Text>
+    </View>
+  );
 }
 
 export default function TabsLayout() {
@@ -33,17 +56,33 @@ export default function TabsLayout() {
         name="dashboard"
         options={{
           title: 'Dashboard',
-          tabBarLabel: 'Today',
-          tabBarIcon: ({ focused }) => <TabIcon icon="🏠" focused={focused} />,
+          tabBarLabel: 'Home',
+          tabBarIcon: ({ focused }) => <TabIcon letter="H" focused={focused} />,
           headerTitle: 'CalorRidge',
         }}
       />
       <Tabs.Screen
-        name="log"
+        name="suggestions"
         options={{
-          title: 'Meal Log',
-          tabBarLabel: 'History',
-          tabBarIcon: ({ focused }) => <TabIcon icon="📋" focused={focused} />,
+          title: 'Suggestions',
+          tabBarLabel: 'Suggest',
+          tabBarIcon: ({ focused }) => <TabIcon letter="S" focused={focused} />,
+        }}
+      />
+      <Tabs.Screen
+        name="workouts"
+        options={{
+          title: 'Workouts',
+          tabBarLabel: 'Workouts',
+          tabBarIcon: ({ focused }) => <TabIcon letter="W" focused={focused} />,
+        }}
+      />
+      <Tabs.Screen
+        name="chat"
+        options={{
+          title: 'CalorRidge AI',
+          tabBarLabel: 'Chat',
+          tabBarIcon: ({ focused }) => <TabIcon letter="C" focused={focused} />,
         }}
       />
       <Tabs.Screen
@@ -51,7 +90,13 @@ export default function TabsLayout() {
         options={{
           title: 'Goals',
           tabBarLabel: 'Goals',
-          tabBarIcon: ({ focused }) => <TabIcon icon="⚙️" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon letter="G" focused={focused} />,
+        }}
+      />
+      <Tabs.Screen
+        name="log"
+        options={{
+          href: null,
         }}
       />
     </Tabs>

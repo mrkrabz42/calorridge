@@ -10,7 +10,7 @@ interface Props {
   onAction?: () => void;
 }
 
-export function EmptyState({ icon = '🍽️', title, subtitle, actionLabel, onAction }: Props) {
+export function EmptyState({ icon = '', title, subtitle, actionLabel, onAction }: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.icon}>{icon}</Text>
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     padding: Spacing.xl,
     gap: Spacing.sm,
   },
-  icon: { fontSize: 64, marginBottom: Spacing.sm },
+  icon: { fontSize: 28, marginBottom: Spacing.sm, color: Colors.text.muted, fontWeight: Typography.weights.bold },
   title: {
     color: Colors.text.primary,
     fontSize: Typography.sizes.lg,

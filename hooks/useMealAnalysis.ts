@@ -144,7 +144,7 @@ export function useMealAnalysis(): UseMealAnalysisReturn {
         setState((prev) => ({
           ...prev,
           state: 'error',
-          error: 'Could not analyze image. Please try again.',
+          error: 'Could not analyse image. Please try again.',
           errorCode: 'CLAUDE_ERROR',
         }));
         return;

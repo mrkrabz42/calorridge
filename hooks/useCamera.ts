@@ -35,7 +35,7 @@ export function useCamera(): UseCameraReturn {
     if (status !== 'granted') {
       Alert.alert(
         'Photo Library Permission Required',
-        'CalorRidge needs access to your photos to analyze meals from your gallery.',
+        'CalorRidge needs access to your photos to analyse meals from your gallery.',
         [
           { text: 'Cancel', style: 'cancel' },
           { text: 'Open Settings', onPress: () => Linking.openSettings() },

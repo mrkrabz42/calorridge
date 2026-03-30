@@ -176,7 +176,7 @@ export default function ConfirmScreen() {
             color={Colors.macro.fat}
           />
           <MacroInput
-            label="Fiber"
+            label="Fibre"
             value={fiber}
             unit="g"
             onChange={setFiber}

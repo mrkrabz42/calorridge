@@ -112,7 +112,7 @@ export default function MealDetailScreen() {
             {formatDate(meal.meal_date)} · {formatTime(meal.logged_at)}
           </Text>
           {meal.notes && (
-            <Text style={styles.notes}>📝 {meal.notes}</Text>
+            <Text style={styles.notes}>Notes: {meal.notes}</Text>
           )}
         </View>
 
@@ -147,7 +147,7 @@ export default function MealDetailScreen() {
             bold
           />
           {meal.fiber_g != null && (
-            <NutrientRow label="Fiber" value={meal.fiber_g} unit="g" color={Colors.macro.fiber} />
+            <NutrientRow label="Fibre" value={meal.fiber_g} unit="g" color={Colors.macro.fiber} />
           )}
           {meal.sugar_g != null && (
             <NutrientRow label="Sugar" value={meal.sugar_g} unit="g" />

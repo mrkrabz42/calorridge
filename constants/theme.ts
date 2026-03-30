@@ -20,6 +20,22 @@ export const Colors = {
     fat: '#FB923C',        // orange-400
     fiber: '#4ADE80',      // green-400
   },
+  // Workouts
+  workout: {
+    cardio: '#F87171',      // red-400
+    strength: '#60A5FA',    // blue-400
+    flexibility: '#A78BFA', // violet-400
+    sports: '#4ADE80',      // green-400
+    burned: '#FB923C',      // orange-400
+  },
+  // Challenge
+  challenge: {
+    hit: '#4ADE80',         // green-400
+    close: '#FACC15',       // yellow-400
+    missed: '#F87171',      // red-400
+    future: '#475569',      // slate-600
+    today: '#22D3EE',       // cyan-400
+  },
   // Status
   status: {
     success: '#4ADE80',    // green-400
