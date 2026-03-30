@@ -93,7 +93,20 @@ export const useGymStore = create<GymState>()((set, get) => ({
       if (session) {
         set({ activeSession: session });
         const exercises = await gymService.getSessionExercisesWithSets(session.id);
-        set({ sessionExercises: exercises });
+
+        // Load previous session data for each exercise
+        const withHistory = await Promise.all(
+          exercises.map(async (we) => {
+            try {
+              const history = await gymService.getExerciseHistory(we.exercise_id, 1);
+              return { ...we, previousSets: history.length > 0 ? history : null };
+            } catch {
+              return { ...we, previousSets: null };
+            }
+          })
+        );
+
+        set({ sessionExercises: withHistory });
       }
     } catch {
       // Silent — no active session
@@ -110,7 +123,20 @@ export const useGymStore = create<GymState>()((set, get) => ({
         session = await gymService.createSession(name);
       }
       const exercises = await gymService.getSessionExercisesWithSets(session.id);
-      set({ activeSession: session, sessionExercises: exercises, isSessionLoading: false });
+
+      // Load previous session data for each exercise
+      const withHistory = await Promise.all(
+        exercises.map(async (we) => {
+          try {
+            const history = await gymService.getExerciseHistory(we.exercise_id, 1);
+            return { ...we, previousSets: history.length > 0 ? history : null };
+          } catch {
+            return { ...we, previousSets: null };
+          }
+        })
+      );
+
+      set({ activeSession: session, sessionExercises: withHistory, isSessionLoading: false });
     } catch (err) {
       set({ error: (err as Error).message, isSessionLoading: false });
     }
@@ -165,7 +191,20 @@ export const useGymStore = create<GymState>()((set, get) => ({
     if (!activeSession) return;
 
     const exercises = await gymService.getSessionExercisesWithSets(activeSession.id);
-    set({ sessionExercises: exercises });
+
+    // Load previous session data for each exercise
+    const withHistory = await Promise.all(
+      exercises.map(async (we) => {
+        try {
+          const history = await gymService.getExerciseHistory(we.exercise_id, 1);
+          return { ...we, previousSets: history.length > 0 ? history : null };
+        } catch {
+          return { ...we, previousSets: null };
+        }
+      })
+    );
+
+    set({ sessionExercises: withHistory });
   },
 
   addExercise: async (exerciseId: string) => {
@@ -185,9 +224,20 @@ export const useGymStore = create<GymState>()((set, get) => ({
       });
     }
 
-    // Refresh
+    // Refresh with history
     const updated = await gymService.getSessionExercisesWithSets(activeSession.id);
-    set({ sessionExercises: updated });
+    const withHistory = await Promise.all(
+      updated.map(async (we) => {
+        try {
+          const history = await gymService.getExerciseHistory(we.exercise_id, 1);
+          return { ...we, previousSets: history.length > 0 ? history : null };
+        } catch {
+          return { ...we, previousSets: null };
+        }
+      })
+    );
+
+    set({ sessionExercises: withHistory });
   },
 
   removeExercise: async (workoutExerciseId: string) => {

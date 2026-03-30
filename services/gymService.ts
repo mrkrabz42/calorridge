@@ -421,19 +421,36 @@ export const gymService = {
   // EXERCISE HISTORY (for inline "previous" display)
   // ============================================================
 
-  async getExerciseHistory(exerciseId: string, limit = 3): Promise<ExerciseSet[][]> {
-    // Get last N completed sessions that included this exercise
+  async getExerciseHistory(exerciseId: string, limit = 1): Promise<ExerciseSet[][]> {
+    const profileId = profileManager.getActiveProfileIdSync();
+
+    // Get last N completed sessions
+    const { data: sessions } = await supabase
+      .from('workout_sessions')
+      .select('id')
+      .eq('profile_id', profileId)
+      .eq('status', 'completed')
+      .order('session_date', { ascending: false })
+      .limit(20);
+
+    if (!sessions?.length) return [];
+
+    const sessionIds = sessions.map((s: any) => s.id);
+
+    // Get workout_exercises for this exercise in those sessions
     const { data: weData } = await supabase
       .from('workout_exercises')
-      .select('id, session_id, workout_sessions!inner(status, session_date)')
+      .select('id, session_id')
       .eq('exercise_id', exerciseId)
-      .eq('workout_sessions.status', 'completed')
+      .in('session_id', sessionIds)
       .order('created_at', { ascending: false })
       .limit(limit);
 
     if (!weData?.length) return [];
 
-    const weIds = weData.map((we: { id: string }) => we.id);
+    const weIds = weData.map((we: any) => we.id);
+
+    // Get completed sets for those workout exercises
     const { data: setsData } = await supabase
       .from('exercise_sets')
       .select('*')

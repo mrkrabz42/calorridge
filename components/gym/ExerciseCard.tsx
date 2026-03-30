@@ -98,11 +98,13 @@ export function ExerciseCard({
 
       {/* Column headers */}
       <View style={styles.columnHeaders}>
-        <Text style={[styles.colHeader, { width: 28 }]}>Set</Text>
+        <Text style={[styles.colHeader, { width: 24 }]}>Set</Text>
+        <Text style={[styles.colHeader, { width: 72, textAlign: 'center' }]}>Prev</Text>
         <Text style={[styles.colHeader, { flex: 1 }]}>Weight</Text>
         <Text style={[styles.colHeader, { flex: 1 }]}>Reps</Text>
-        <Text style={[styles.colHeader, { width: 48 }]}>RPE</Text>
-        <Text style={[styles.colHeader, { width: 44, textAlign: 'center' }]}> </Text>
+        <Text style={[styles.colHeader, { width: 40, textAlign: 'center' }]}>RPE</Text>
+        <Text style={[styles.colHeader, { width: 40, textAlign: 'center' }]}> </Text>
+        <Text style={[styles.colHeader, { width: 22 }]}> </Text>
       </View>
 
       {/* Sets */}
@@ -119,7 +121,6 @@ export function ExerciseCard({
             }
           }}
           onDelete={() => onDeleteSet(s.id)}
-          isCompleted={s.is_completed}
         />
       ))}
 
@@ -211,7 +212,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.sm,
-    gap: Spacing.sm,
+    gap: 6,
     marginBottom: 2,
   },
   colHeader: {
