@@ -47,6 +47,23 @@ export interface CreateMealInput {
   sodium_mg?: number;
 }
 
+export interface SavedMeal {
+  id: string;
+  profile_id: string;
+  name: string;
+  meal_type: string | null;
+  calories: number;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
+  fiber_g: number | null;
+  sugar_g: number | null;
+  sodium_mg: number | null;
+  use_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface DailyNutrition {
   meal_date: string;
   meal_count: number;

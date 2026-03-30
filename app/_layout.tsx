@@ -91,6 +91,14 @@ export default function RootLayout() {
             animation: 'slide_from_bottom',
           }}
         />
+        <Stack.Screen
+          name="meal/quick-log"
+          options={{
+            title: 'Quick Log',
+            presentation: 'modal',
+            animation: 'slide_from_bottom',
+          }}
+        />
         <Stack.Screen name="meal/portion" options={{ title: 'Portion Size' }} />
         <Stack.Screen name="profile" options={{ title: 'Profile' }} />
         <Stack.Screen

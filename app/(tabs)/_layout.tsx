@@ -62,11 +62,11 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="suggestions"
+        name="meals"
         options={{
-          title: 'Suggestions',
-          tabBarLabel: 'Suggest',
-          tabBarIcon: ({ focused }) => <TabIcon letter="S" focused={focused} />,
+          title: 'Meals',
+          tabBarLabel: 'Meals',
+          tabBarIcon: ({ focused }) => <TabIcon letter="M" focused={focused} />,
         }}
       />
       <Tabs.Screen
@@ -75,6 +75,14 @@ export default function TabsLayout() {
           title: 'Workouts',
           tabBarLabel: 'Workouts',
           tabBarIcon: ({ focused }) => <TabIcon letter="W" focused={focused} />,
+        }}
+      />
+      <Tabs.Screen
+        name="suggestions"
+        options={{
+          title: 'Suggestions',
+          tabBarLabel: 'Suggest',
+          tabBarIcon: ({ focused }) => <TabIcon letter="S" focused={focused} />,
         }}
       />
       <Tabs.Screen
@@ -88,9 +96,8 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Goals',
-          tabBarLabel: 'Goals',
-          tabBarIcon: ({ focused }) => <TabIcon letter="G" focused={focused} />,
+          href: null,
+          title: 'Goals and Settings',
         }}
       />
       <Tabs.Screen

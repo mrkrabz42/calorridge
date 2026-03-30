@@ -9,7 +9,7 @@ import {
   Pressable,
   TextInput,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import { useMealsStore } from '../../store/mealsStore';
 import { useWorkoutsStore } from '../../store/workoutsStore';
 import { useChallengeStore } from '../../store/challengeStore';
@@ -95,6 +95,19 @@ export default function DashboardScreen() {
 
   return (
     <View style={styles.root}>
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => router.push('/(tabs)/settings')}
+              style={styles.headerBtn}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.headerBtnText}>Settings</Text>
+            </TouchableOpacity>
+          ),
+        }}
+      />
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.content}
@@ -163,7 +176,7 @@ export default function DashboardScreen() {
           <EmptyState
             icon=""
             title="No meals logged yet"
-            subtitle="Tap the + button to photograph your first meal"
+            subtitle="Tap the + button to log your first meal"
           />
         ) : (
           MEAL_TYPE_ORDER.filter((type) => mealsByType[type].length > 0).map((type) => {
@@ -207,23 +220,19 @@ export default function DashboardScreen() {
       {showFabMenu && (
         <Pressable style={styles.fabOverlay} onPress={() => setShowFabMenu(false)}>
           <View style={styles.fabMenu}>
-            <TouchableOpacity style={styles.fabMenuItem} onPress={() => { setShowFabMenu(false); router.push('/meal/capture'); }}>
-              <Text style={styles.fabMenuIcon}>Photo</Text>
-              <Text style={styles.fabMenuLabel}>Photo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.fabMenuItem} onPress={() => { setShowFabMenu(false); router.push('/meal/barcode'); }}>
-              <Text style={styles.fabMenuIcon}>Scan</Text>
-              <Text style={styles.fabMenuLabel}>Barcode</Text>
+            <TouchableOpacity style={styles.fabMenuItem} onPress={() => { setShowFabMenu(false); router.push('/meal/quick-log'); }}>
+              <Text style={styles.fabMenuIcon}>Edit</Text>
+              <Text style={styles.fabMenuLabel}>Quick Entry</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.fabMenuItem} onPress={() => { setShowFabMenu(false); router.push('/meal/search'); }}>
               <Text style={styles.fabMenuIcon}>Find</Text>
               <Text style={styles.fabMenuLabel}>Search</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.fabMenuItem} onPress={() => { setShowFabMenu(false); router.push('/meal/confirm'); }}>
-              <Text style={styles.fabMenuIcon}>Edit</Text>
-              <Text style={styles.fabMenuLabel}>Manual</Text>
+            <TouchableOpacity style={styles.fabMenuItem} onPress={() => { setShowFabMenu(false); router.push('/(tabs)/meals'); }}>
+              <Text style={styles.fabMenuIcon}>Star</Text>
+              <Text style={styles.fabMenuLabel}>Saved</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.fabMenuItem} onPress={() => { setShowFabMenu(false); router.push('/workout/log'); }}>
+            <TouchableOpacity style={styles.fabMenuItem} onPress={() => { setShowFabMenu(false); router.push('/gym/session'); }}>
               <Text style={styles.fabMenuIcon}>Gym</Text>
               <Text style={styles.fabMenuLabel}>Workout</Text>
             </TouchableOpacity>
@@ -237,7 +246,7 @@ export default function DashboardScreen() {
         onPress={showAddOptions}
         activeOpacity={0.85}
       >
-        <Text style={styles.fabIcon}>{showFabMenu ? '✕' : '+'}</Text>
+        <Text style={styles.fabIcon}>{showFabMenu ? 'X' : '+'}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -247,6 +256,15 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: Colors.bg.primary },
   scroll: { flex: 1 },
   content: { paddingTop: Spacing.md },
+  headerBtn: {
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+  },
+  headerBtnText: {
+    color: Colors.brand.primary,
+    fontSize: Typography.sizes.sm,
+    fontWeight: Typography.weights.semibold,
+  },
   date: {
     color: Colors.text.secondary,
     fontSize: Typography.sizes.base,
@@ -349,6 +367,9 @@ const styles = StyleSheet.create({
     fontWeight: Typography.weights.medium,
   },
   fab: {
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
     width: 58,
     height: 58,
     borderRadius: 29,
