@@ -205,6 +205,16 @@ export default function MealsScreen() {
               style={styles.fabMenuItem}
               onPress={() => {
                 setShowFabMenu(false);
+                router.push('/meal/photo-capture');
+              }}
+            >
+              <Text style={styles.fabMenuIcon}>Photo</Text>
+              <Text style={styles.fabMenuLabel}>Photo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.fabMenuItem}
+              onPress={() => {
+                setShowFabMenu(false);
                 router.push('/meal/quick-log');
               }}
             >

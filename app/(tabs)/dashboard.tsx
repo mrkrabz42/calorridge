@@ -220,6 +220,10 @@ export default function DashboardScreen() {
       {showFabMenu && (
         <Pressable style={styles.fabOverlay} onPress={() => setShowFabMenu(false)}>
           <View style={styles.fabMenu}>
+            <TouchableOpacity style={styles.fabMenuItem} onPress={() => { setShowFabMenu(false); router.push('/meal/photo-capture'); }}>
+              <Text style={styles.fabMenuIcon}>Photo</Text>
+              <Text style={styles.fabMenuLabel}>Photo</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.fabMenuItem} onPress={() => { setShowFabMenu(false); router.push('/meal/quick-log'); }}>
               <Text style={styles.fabMenuIcon}>Edit</Text>
               <Text style={styles.fabMenuLabel}>Quick Entry</Text>

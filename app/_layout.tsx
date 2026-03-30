@@ -61,6 +61,14 @@ export default function RootLayout() {
           options={{ headerShown: false, animation: 'fade' }}
         />
         <Stack.Screen
+          name="meal/photo-capture"
+          options={{
+            title: 'Add Meal',
+            presentation: 'modal',
+            animation: 'slide_from_bottom',
+          }}
+        />
+        <Stack.Screen
           name="meal/capture"
           options={{
             title: 'Capture Meal',
