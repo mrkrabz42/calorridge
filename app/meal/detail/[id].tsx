@@ -12,12 +12,13 @@ import {
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { mealsService } from '../../../services/mealsService';
+import { foodDiaryService } from '../../../services/foodDiaryService';
 import { useMealsStore } from '../../../store/mealsStore';
 import { NutrientRow } from '../../../components/meal/NutrientRow';
 import { ConfirmDialog } from '../../../components/shared/ConfirmDialog';
 import { Colors, Typography, Spacing, Radius } from '../../../constants';
 import { MEAL_TYPES } from '../../../constants/mealTypes';
-import { Meal } from '../../../types';
+import { Meal, FoodLogEntry } from '../../../types';
 import { formatDate, formatTime } from '../../../utils/macroUtils';
 
 export default function MealDetailScreen() {
@@ -27,16 +28,21 @@ export default function MealDetailScreen() {
   const deleteMeal = useMealsStore((s) => s.deleteMeal);
 
   const [meal, setMeal] = useState<Meal | null>(null);
+  const [foodLogEntries, setFoodLogEntries] = useState<FoodLogEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (!id) return;
-    mealsService.getMealById(id).then((m) => {
+    Promise.all([
+      mealsService.getMealById(id),
+      foodDiaryService.getFoodLogEntries(id),
+    ]).then(([m, entries]) => {
       setMeal(m);
+      setFoodLogEntries(entries);
       setIsLoading(false);
-    });
+    }).catch(() => setIsLoading(false));
   }, [id]);
 
   useEffect(() => {
@@ -171,6 +177,29 @@ export default function MealDetailScreen() {
                   <Text style={styles.ingredientCal}>{item.calories} kcal</Text>
                   <Text style={styles.ingredientDetail}>
                     P:{item.protein_g}g C:{item.carbs_g}g F:{item.fat_g}g
+                  </Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* Food log entries (from plate builder) */}
+        {foodLogEntries.length > 0 && (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Food Items</Text>
+            {foodLogEntries.map((entry) => (
+              <View key={entry.id} style={styles.ingredient}>
+                <View style={styles.ingredientInfo}>
+                  <Text style={styles.ingredientName}>{entry.food_name}</Text>
+                  <Text style={styles.ingredientQty}>
+                    {Number(entry.servings)} x {entry.serving_size}
+                  </Text>
+                </View>
+                <View style={styles.ingredientMacros}>
+                  <Text style={styles.ingredientCal}>{entry.calories} kcal</Text>
+                  <Text style={styles.ingredientDetail}>
+                    P:{Number(entry.protein_g).toFixed(0)}g C:{Number(entry.carbs_g).toFixed(0)}g F:{Number(entry.fat_g).toFixed(0)}g
                   </Text>
                 </View>
               </View>

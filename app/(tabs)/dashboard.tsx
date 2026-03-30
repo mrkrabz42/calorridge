@@ -25,6 +25,7 @@ import { MEAL_TYPE_ORDER, MEAL_TYPES } from '../../constants/mealTypes';
 import { Meal } from '../../types';
 import { formatDate, getTodayDateString } from '../../utils/macroUtils';
 import { useAdaptiveStore } from '../../store/adaptiveStore';
+import { usePlateBuildStore } from '../../store/plateBuildStore';
 
 export default function DashboardScreen() {
   const { fetchTodayMeals, isLoadingToday, todayMeals } = useMealsStore();
@@ -220,21 +221,13 @@ export default function DashboardScreen() {
       {showFabMenu && (
         <Pressable style={styles.fabOverlay} onPress={() => setShowFabMenu(false)}>
           <View style={styles.fabMenu}>
+            <TouchableOpacity style={styles.fabMenuItem} onPress={() => { setShowFabMenu(false); usePlateBuildStore.getState().clearPlate(); router.push('/meal/log'); }}>
+              <Text style={styles.fabMenuIcon}>Log</Text>
+              <Text style={styles.fabMenuLabel}>Log Meal</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.fabMenuItem} onPress={() => { setShowFabMenu(false); router.push('/meal/photo-capture'); }}>
               <Text style={styles.fabMenuIcon}>Photo</Text>
               <Text style={styles.fabMenuLabel}>Photo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.fabMenuItem} onPress={() => { setShowFabMenu(false); router.push('/meal/quick-log'); }}>
-              <Text style={styles.fabMenuIcon}>Edit</Text>
-              <Text style={styles.fabMenuLabel}>Quick Entry</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.fabMenuItem} onPress={() => { setShowFabMenu(false); router.push('/meal/search'); }}>
-              <Text style={styles.fabMenuIcon}>Find</Text>
-              <Text style={styles.fabMenuLabel}>Search</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.fabMenuItem} onPress={() => { setShowFabMenu(false); router.push('/(tabs)/meals'); }}>
-              <Text style={styles.fabMenuIcon}>Star</Text>
-              <Text style={styles.fabMenuLabel}>Saved</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.fabMenuItem} onPress={() => { setShowFabMenu(false); router.push('/gym/session'); }}>
               <Text style={styles.fabMenuIcon}>Gym</Text>

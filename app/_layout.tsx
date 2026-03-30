@@ -78,6 +78,22 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
+          name="meal/log"
+          options={{
+            title: 'Log Meal',
+            presentation: 'modal',
+            animation: 'slide_from_bottom',
+          }}
+        />
+        <Stack.Screen
+          name="meal/add-food"
+          options={{
+            title: 'Add Food',
+            presentation: 'modal',
+            animation: 'slide_from_bottom',
+          }}
+        />
+        <Stack.Screen
           name="meal/confirm"
           options={{ title: 'Review Meal', headerBackTitle: 'Retake' }}
         />

@@ -64,6 +64,39 @@ export interface SavedMeal {
   updated_at: string;
 }
 
+export interface CustomFood {
+  id: string;
+  profile_id: string;
+  name: string;
+  brand: string | null;
+  serving_size: string;
+  serving_grams: number | null;
+  calories: number;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
+  fiber_g: number | null;
+  use_count: number;
+  created_at: string;
+}
+
+export interface FoodLogEntry {
+  id: string;
+  meal_id: string;
+  profile_id: string;
+  food_name: string;
+  brand: string | null;
+  servings: number;
+  serving_size: string;
+  calories: number;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
+  fiber_g: number | null;
+  source: string;
+  created_at: string;
+}
+
 export interface DailyNutrition {
   meal_date: string;
   meal_count: number;

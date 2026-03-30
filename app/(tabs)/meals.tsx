@@ -17,6 +17,7 @@ import { EmptyState } from '../../components/shared/EmptyState';
 import { Colors, Typography, Spacing, Radius } from '../../constants';
 import { MEAL_TYPE_ORDER, MEAL_TYPES } from '../../constants/mealTypes';
 import { SavedMeal, Meal, MealType } from '../../types';
+import { usePlateBuildStore } from '../../store/plateBuildStore';
 
 export default function MealsScreen() {
   const { savedMeals, isLoading: savedLoading, fetchSavedMeals, logSavedMeal, deleteSavedMeal } =
@@ -205,41 +206,22 @@ export default function MealsScreen() {
               style={styles.fabMenuItem}
               onPress={() => {
                 setShowFabMenu(false);
+                usePlateBuildStore.getState().clearPlate();
+                router.push('/meal/log');
+              }}
+            >
+              <Text style={styles.fabMenuIcon}>Log</Text>
+              <Text style={styles.fabMenuLabel}>Log Meal</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.fabMenuItem}
+              onPress={() => {
+                setShowFabMenu(false);
                 router.push('/meal/photo-capture');
               }}
             >
               <Text style={styles.fabMenuIcon}>Photo</Text>
               <Text style={styles.fabMenuLabel}>Photo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.fabMenuItem}
-              onPress={() => {
-                setShowFabMenu(false);
-                router.push('/meal/quick-log');
-              }}
-            >
-              <Text style={styles.fabMenuIcon}>Edit</Text>
-              <Text style={styles.fabMenuLabel}>Quick Entry</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.fabMenuItem}
-              onPress={() => {
-                setShowFabMenu(false);
-                router.push('/meal/search');
-              }}
-            >
-              <Text style={styles.fabMenuIcon}>Find</Text>
-              <Text style={styles.fabMenuLabel}>Search Food</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.fabMenuItem}
-              onPress={() => {
-                setShowFabMenu(false);
-                router.push('/meal/confirm');
-              }}
-            >
-              <Text style={styles.fabMenuIcon}>Form</Text>
-              <Text style={styles.fabMenuLabel}>Full Entry</Text>
             </TouchableOpacity>
           </View>
         </Pressable>

@@ -13,6 +13,7 @@ import {
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { supabase } from '../../services/supabase';
+import { usePlateBuildStore } from '../../store/plateBuildStore';
 import { Colors, Typography, Spacing, Radius } from '../../constants';
 import { MEAL_TYPE_ORDER, MEAL_TYPES } from '../../constants/mealTypes';
 import { MealType } from '../../types';
@@ -155,15 +156,48 @@ export default function PhotoCaptureScreen() {
         throw new Error('No analysis data returned');
       }
 
-      router.push({
-        pathname: '/meal/confirm',
-        params: {
-          result: JSON.stringify(data.data),
-          photoUri: previewUrl ?? '',
-          mealType,
-          notes,
-        },
-      });
+      // Add each detected food item to the plate builder
+      const plateStore = usePlateBuildStore.getState();
+      plateStore.clearPlate();
+      plateStore.setMealType(mealType);
+
+      const analysisData = data.data;
+      const foodItems: any[] = analysisData.food_items ?? analysisData.items ?? [];
+
+      for (const item of foodItems) {
+        plateStore.addItem({
+          food_name: item.name ?? item.food_name ?? 'Unknown item',
+          servings: 1,
+          serving_size: item.estimated_quantity ?? item.serving_size ?? '1 serving',
+          calories_per_serving: item.calories ?? 0,
+          protein_per_serving: item.protein_g ?? 0,
+          carbs_per_serving: item.carbs_g ?? 0,
+          fat_per_serving: item.fat_g ?? 0,
+          fiber_per_serving: item.fiber_g,
+          source: 'ai_photo',
+        });
+      }
+
+      // If no individual items but we have totals, add as single item
+      if (foodItems.length === 0 && analysisData.food_name) {
+        plateStore.addItem({
+          food_name: analysisData.food_name,
+          servings: 1,
+          serving_size: '1 serving',
+          calories_per_serving: analysisData.calories ?? 0,
+          protein_per_serving: analysisData.protein_g ?? 0,
+          carbs_per_serving: analysisData.carbs_g ?? 0,
+          fat_per_serving: analysisData.fat_g ?? 0,
+          fiber_per_serving: analysisData.fiber_g,
+          source: 'ai_photo',
+        });
+      }
+
+      if (notes) {
+        plateStore.setMealName(notes);
+      }
+
+      router.push('/meal/log');
     } catch (err: any) {
       console.error('[PhotoCapture] Analysis error:', err);
       setError(err?.message ?? 'Analysis failed. Please try again.');
@@ -176,10 +210,11 @@ export default function PhotoCaptureScreen() {
   // Navigate to manual entry
   // -----------------------------------------------------------------------
   const goManual = () => {
-    router.push({
-      pathname: '/meal/confirm',
-      params: { manual: '1', mealType, notes },
-    });
+    const plateStore = usePlateBuildStore.getState();
+    plateStore.clearPlate();
+    plateStore.setMealType(mealType);
+    if (notes) plateStore.setMealName(notes);
+    router.push('/meal/log');
   };
 
   // -----------------------------------------------------------------------
