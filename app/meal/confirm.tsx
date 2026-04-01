@@ -15,6 +15,7 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { mealsService } from '../../services/mealsService';
+import { foodDiaryService } from '../../services/foodDiaryService';
 import { useMealsStore } from '../../store/mealsStore';
 import { useSavedMealsStore } from '../../store/savedMealsStore';
 import { MealTypeSelector } from '../../components/meal/MealTypeSelector';
@@ -122,6 +123,30 @@ export default function ConfirmScreen() {
 
       const meal = await mealsService.createMeal(mealData);
       addMealOptimistic(meal);
+
+      // Upsert food items to library for future quick-add
+      if (parsedResult?.food_items) {
+        for (const item of parsedResult.food_items) {
+          foodDiaryService.upsertToFoodLibrary({
+            name: item.name,
+            serving_size: item.estimated_quantity,
+            calories: item.calories,
+            protein_g: item.protein_g,
+            carbs_g: item.carbs_g,
+            fat_g: item.fat_g,
+          }).catch(() => {});
+        }
+      } else if (foodName.trim()) {
+        foodDiaryService.upsertToFoodLibrary({
+          name: foodName.trim(),
+          serving_size: '1 serving',
+          calories: parseInt(calories) || 0,
+          protein_g: parseFloat(protein) || 0,
+          carbs_g: parseFloat(carbs) || 0,
+          fat_g: parseFloat(fat) || 0,
+          fiber_g: parseFloat(fiber) || undefined,
+        }).catch(() => {});
+      }
 
       router.dismissAll();
     } catch (err) {

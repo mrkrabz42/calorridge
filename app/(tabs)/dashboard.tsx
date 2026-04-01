@@ -22,10 +22,15 @@ import { ChallengeBanner } from '../../components/dashboard/ChallengeBanner';
 import { EmptyState } from '../../components/shared/EmptyState';
 import { Colors, Typography, Spacing, Radius } from '../../constants';
 import { MEAL_TYPE_ORDER, MEAL_TYPES } from '../../constants/mealTypes';
-import { Meal } from '../../types';
+import { Meal, MealType } from '../../types';
 import { formatDate, getTodayDateString } from '../../utils/macroUtils';
 import { useAdaptiveStore } from '../../store/adaptiveStore';
 import { usePlateBuildStore } from '../../store/plateBuildStore';
+import { copyService } from '../../services/copyService';
+import { useDiaryStore } from '../../store/diaryStore';
+import { StreakCounter } from '../../components/dashboard/StreakCounter';
+import { CompleteDiaryButton } from '../../components/dashboard/CompleteDiaryButton';
+import { DiarySummaryCard } from '../../components/dashboard/DiarySummaryCard';
 
 export default function DashboardScreen() {
   const { fetchTodayMeals, isLoadingToday, todayMeals } = useMealsStore();
@@ -34,11 +39,15 @@ export default function DashboardScreen() {
   const { nutrition, progress, goals, todayBurned, todayWorkouts, netCalories } = useDailyStats();
   const { latestWeight, logWeighIn, fetchLatest } = useAdaptiveStore();
 
+  const { todayCompleted, todayCompletion, streak, checkTodayCompletion, completeDiary, fetchStreak } = useDiaryStore();
+
   const [weightInput, setWeightInput] = useState('');
   const [weightLogged, setWeightLogged] = useState(false);
 
   useEffect(() => {
     fetchLatest();
+    checkTodayCompletion();
+    fetchStreak();
   }, []);
 
   // Check if today already has a weigh-in
@@ -88,6 +97,18 @@ export default function DashboardScreen() {
     {} as Record<string, Meal[]>
   );
 
+  const handleCopyMeal = async (meal: Meal) => {
+    try {
+      const plateItems = await copyService.copyMealToPlate(meal.id);
+      const store = usePlateBuildStore.getState();
+      store.clearPlate();
+      store.loadItems(plateItems, (meal.meal_type as MealType) ?? undefined, meal.food_name);
+      router.push('/meal/log');
+    } catch {
+      // silent
+    }
+  };
+
   const [showFabMenu, setShowFabMenu] = useState(false);
 
   const showAddOptions = () => {
@@ -120,8 +141,11 @@ export default function DashboardScreen() {
           />
         }
       >
-        {/* Date header */}
+        {/* Date header + streak */}
         <Text style={styles.date}>{formatDate(getTodayDateString())}</Text>
+        <View style={{ paddingHorizontal: Spacing.md, marginBottom: Spacing.sm }}>
+          <StreakCounter currentStreak={streak.current_count} />
+        </View>
 
         {/* Challenge banner */}
         {activeChallenge && (
@@ -192,11 +216,31 @@ export default function DashboardScreen() {
                   </Text>
                 </View>
                 {mealsByType[type].map((meal) => (
-                  <MealCard key={meal.id} meal={meal} />
+                  <MealCard key={meal.id} meal={meal} onCopy={handleCopyMeal} />
                 ))}
               </View>
             );
           })
+        )}
+
+        {/* Diary completion */}
+        {todayMeals.length > 0 && !todayCompleted && (
+          <View style={{ paddingHorizontal: Spacing.md, marginBottom: Spacing.md }}>
+            <CompleteDiaryButton
+              onComplete={async () => {
+                await completeDiary(
+                  { total_calories: nutrition.total_calories, total_protein_g: nutrition.total_protein_g, total_carbs_g: nutrition.total_carbs_g, total_fat_g: nutrition.total_fat_g, total_fiber_g: nutrition.total_fiber_g },
+                  { calories: goals.calories, protein_g: goals.protein_g, carbs_g: goals.carbs_g, fat_g: goals.fat_g }
+                );
+                fetchStreak();
+              }}
+            />
+          </View>
+        )}
+        {todayCompleted && todayCompletion && (
+          <View style={{ paddingHorizontal: Spacing.md, marginBottom: Spacing.md }}>
+            <DiarySummaryCard completion={todayCompletion} />
+          </View>
         )}
 
         {/* Quick actions */}

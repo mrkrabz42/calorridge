@@ -1,5 +1,5 @@
 CREATE TABLE custom_foods (
-  id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   profile_id      UUID REFERENCES profiles(id),
   name            TEXT NOT NULL,
   brand           TEXT,
@@ -18,7 +18,7 @@ ALTER TABLE custom_foods ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow anon full access to custom_foods" ON custom_foods FOR ALL TO anon USING (true) WITH CHECK (true);
 
 CREATE TABLE food_log_entries (
-  id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   meal_id         UUID REFERENCES meals(id) ON DELETE CASCADE,
   profile_id      UUID REFERENCES profiles(id),
   food_name       TEXT NOT NULL,

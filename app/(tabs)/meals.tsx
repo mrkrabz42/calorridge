@@ -82,6 +82,19 @@ export default function MealsScreen() {
           />
         }
       >
+        {/* My Recipes Link */}
+        <TouchableOpacity
+          style={styles.recipesLink}
+          onPress={() => router.push('/recipe/list')}
+          activeOpacity={0.7}
+        >
+          <View style={{ flex: 1 }}>
+            <Text style={styles.recipesLinkTitle}>My Recipes</Text>
+            <Text style={styles.recipesLinkSub}>Create and log multi-ingredient dishes</Text>
+          </View>
+          <Text style={styles.recipesLinkArrow}>{'\u203A'}</Text>
+        </TouchableOpacity>
+
         {/* Saved Meals Section */}
         <View style={styles.sectionContainer}>
           <View style={styles.sectionHeaderRow}>
@@ -243,6 +256,32 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: Colors.bg.primary },
   scroll: { flex: 1 },
   content: { paddingTop: Spacing.md },
+  recipesLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.bg.card,
+    borderRadius: Radius.lg,
+    padding: Spacing.md,
+    marginHorizontal: Spacing.md,
+    marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.brand.primary + '30',
+  },
+  recipesLinkTitle: {
+    color: Colors.text.primary,
+    fontSize: Typography.sizes.base,
+    fontWeight: Typography.weights.semibold,
+  },
+  recipesLinkSub: {
+    color: Colors.text.muted,
+    fontSize: Typography.sizes.xs,
+    marginTop: 2,
+  },
+  recipesLinkArrow: {
+    color: Colors.text.muted,
+    fontSize: 24,
+    marginLeft: Spacing.sm,
+  },
   sectionContainer: {
     paddingHorizontal: Spacing.md,
     marginBottom: Spacing.lg,

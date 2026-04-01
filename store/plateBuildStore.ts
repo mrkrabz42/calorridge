@@ -12,7 +12,7 @@ export interface PlateItem {
   carbs_per_serving: number;
   fat_per_serving: number;
   fiber_per_serving?: number;
-  source: 'manual' | 'search' | 'saved' | 'custom' | 'ai_photo';
+  source: 'manual' | 'search' | 'saved' | 'custom' | 'ai_photo' | 'recipe' | 'barcode';
   source_id?: string;
 }
 
@@ -30,6 +30,7 @@ interface PlateBuildState {
   removeItem: (id: string) => void;
   updateServings: (id: string, servings: number) => void;
   clearPlate: () => void;
+  loadItems: (items: PlateItem[], mealType?: MealType, mealName?: string) => void;
   getTotals: () => { calories: number; protein_g: number; carbs_g: number; fat_g: number; fiber_g: number };
 }
 
@@ -53,6 +54,11 @@ export const usePlateBuildStore = create<PlateBuildState>()((set, get) => ({
     items: s.items.map((i) => i.id === id ? { ...i, servings } : i),
   })),
   clearPlate: () => set({ items: [], mealType: guessMealType(), mealName: '' }),
+  loadItems: (items, mealType, mealName) => set({
+    items: items.map((i) => ({ ...i, id: i.id || genId() })),
+    mealType: mealType ?? guessMealType(),
+    mealName: mealName ?? '',
+  }),
   getTotals: () => {
     const items = get().items;
     return items.reduce((acc, i) => ({

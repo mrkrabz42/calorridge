@@ -18,6 +18,19 @@ interface SavedMealsState {
     fiber_g?: number;
     sugar_g?: number;
     sodium_mg?: number;
+    items?: Array<{
+      food_name: string;
+      brand?: string;
+      servings: number;
+      serving_size: string;
+      calories: number;
+      protein_g: number;
+      carbs_g: number;
+      fat_g: number;
+      fiber_g?: number;
+      source: string;
+      source_id?: string;
+    }>;
   }) => Promise<SavedMeal>;
   logSavedMeal: (savedMealId: string, mealType: MealType) => Promise<Meal>;
   deleteSavedMeal: (id: string) => Promise<void>;

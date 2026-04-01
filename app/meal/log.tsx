@@ -280,17 +280,28 @@ export default function PlateBuilderScreen() {
           fat_g: Math.round(i.fat_per_serving * i.servings * 10) / 10,
           fiber_g: i.fiber_per_serving ? Math.round(i.fiber_per_serving * i.servings * 10) / 10 : undefined,
           source: i.source,
+          source_id: i.source_id,
         }))
       );
 
-      // 3. Increment use counts for custom foods
+      // 3. Increment use counts for custom foods + upsert all to food library
       for (const item of items) {
         if (item.source === 'custom' && item.source_id) {
           foodDiaryService.incrementUseCount(item.source_id).catch(() => {});
         }
+        foodDiaryService.upsertToFoodLibrary({
+          name: item.food_name,
+          brand: item.brand,
+          serving_size: item.serving_size,
+          calories: item.calories_per_serving,
+          protein_g: item.protein_per_serving,
+          carbs_g: item.carbs_per_serving,
+          fat_g: item.fat_per_serving,
+          fiber_g: item.fiber_per_serving,
+        }).catch(() => {});
       }
 
-      // 4. Save to favourites if toggled
+      // 4. Save to favourites if toggled (with component items)
       if (saveToFavourites && foodName) {
         try {
           await saveMeal({
@@ -301,6 +312,19 @@ export default function PlateBuilderScreen() {
             carbs_g: totals.carbs_g,
             fat_g: totals.fat_g,
             fiber_g: totals.fiber_g,
+            items: items.map((i) => ({
+              food_name: i.food_name,
+              brand: i.brand,
+              servings: i.servings,
+              serving_size: i.serving_size,
+              calories: Math.round(i.calories_per_serving * i.servings),
+              protein_g: Math.round(i.protein_per_serving * i.servings * 10) / 10,
+              carbs_g: Math.round(i.carbs_per_serving * i.servings * 10) / 10,
+              fat_g: Math.round(i.fat_per_serving * i.servings * 10) / 10,
+              fiber_g: i.fiber_per_serving ? Math.round(i.fiber_per_serving * i.servings * 10) / 10 : undefined,
+              source: i.source,
+              source_id: i.source_id,
+            })),
           });
         } catch {
           // non-critical

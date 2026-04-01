@@ -9,9 +9,10 @@ import { formatTime } from '../../utils/macroUtils';
 interface Props {
   meal: Meal;
   onPress?: () => void;
+  onCopy?: (meal: Meal) => void;
 }
 
-export function MealCard({ meal, onPress }: Props) {
+export function MealCard({ meal, onPress, onCopy }: Props) {
   const config = MEAL_TYPES[meal.meal_type as keyof typeof MEAL_TYPES];
   const handlePress = onPress ?? (() => router.push(`/meal/detail/${meal.id}`));
 
@@ -28,6 +29,16 @@ export function MealCard({ meal, onPress }: Props) {
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.foodName} numberOfLines={1}>{meal.food_name}</Text>
+          {onCopy && (
+            <TouchableOpacity
+              style={styles.copyBtn}
+              onPress={(e) => { e.stopPropagation(); onCopy(meal); }}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              activeOpacity={0.6}
+            >
+              <Text style={styles.copyBtnText}>{'\u2398'}</Text>
+            </TouchableOpacity>
+          )}
           <Text style={styles.calories}>{meal.calories} kcal</Text>
         </View>
         <View style={styles.macros}>
@@ -129,4 +140,18 @@ const styles = StyleSheet.create({
     marginRight: Spacing.sm,
   },
   typeText: { fontSize: 18 },
+  copyBtn: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: Colors.border.default,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 6,
+  },
+  copyBtnText: {
+    color: Colors.text.secondary,
+    fontSize: 14,
+    fontWeight: Typography.weights.bold,
+  },
 });
